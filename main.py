@@ -37,7 +37,7 @@ async def download_file(event):
         )
         await event.reply("File downloaded successfully!")
         output = subprocess.check_output(["bash", "-c", f"./transfer lit {filename}"]).decode().strip().splitlines()[-1].strip()
-        await event.reply(output)
+        await event.reply(output[:-300])
 
         bot.disconnect()
 
