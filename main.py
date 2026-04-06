@@ -8,7 +8,7 @@ bot = TelegramClient(
     StringSession(os.environ["TOKEN"]),
     int(os.environ["API_ID"]),
     os.environ["API_HASH"],
-)
+).start()
 
 
 @bot.on(events.NewMessage(pattern="/start"))
