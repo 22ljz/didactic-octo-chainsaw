@@ -37,16 +37,15 @@ async def download_file(event):
         )
         await msg.edit("File downloaded successfully!")
         result = subprocess.run(
-            f"./transfer lit {filename}",
+            f"./transfer lit \"{filename}\"",
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
             shell=True,
             encoding="utf-8"
         )
 
-        output_lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-        await msg.edit(output_lines[-1])
+        await msg.edit(result.stdout.strip().splitlines()[-1].strip())
 
         bot.disconnect()
 
