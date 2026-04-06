@@ -32,7 +32,7 @@ async def download_file(event):
         await event.message.download_media(
             file=filename,
             progress_callback=lambda d, t: print(
-                f"Download: {d / t * 100:.1f}% ({d}/{t} bytes)"
+                f"Download: {d / t * 100:.1f}% ({d}/{t} bytes)", flush=True
             ),
         )
         await msg.edit("File downloaded successfully!")
