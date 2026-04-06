@@ -45,7 +45,7 @@ async def download_file(event):
         )
 
         output_lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-        await event.reply(output_lines[-1])
+        await event.edit(output_lines[-1])
 
         bot.disconnect()
 
