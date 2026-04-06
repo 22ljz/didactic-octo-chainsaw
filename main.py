@@ -31,11 +31,11 @@ async def download_file(event):
 
         await event.message.download_media(
             file=filename,
-            progress_callback=lambda d, t: msg.edit(
+            progress_callback=lambda d, t: print(
                 f"Download: {d / t * 100:.1f}% ({d}/{t} bytes)"
             ),
         )
-        await event.reply("File downloaded successfully!")
+        await msg.edit("File downloaded successfully!")
         result = subprocess.run(
             ["bash", "-c", f"./transfer lit {filename}"],
             stdout=subprocess.PIPE,
@@ -45,7 +45,7 @@ async def download_file(event):
         )
 
         output_lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-        await event.edit(output_lines[-1])
+        await msg.edit(output_lines[-1])
 
         bot.disconnect()
 
