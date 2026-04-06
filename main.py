@@ -37,10 +37,11 @@ async def download_file(event):
         )
         await msg.edit("File downloaded successfully!")
         result = subprocess.run(
-            ["bash", "-c", f"./transfer lit {filename}"],
+            f"./transfer lit {filename}",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            shell=True,
             encoding="utf-8"
         )
 
