@@ -8,11 +8,7 @@ import time
 
 START = time.time()
 
-tg_client = TelegramClient(
-    StringSession(os.environ["TOKEN"]),
-    int(os.environ["API_ID"]),
-    os.environ["API_HASH"],
-)
+tg_client = None
 
 bucket = boto3.resource(
     "s3",
@@ -63,6 +59,11 @@ async def main():
 if __name__ == "__main__":
     while time.time() - START < 4 * 60 * 60:
         try:
+            tg_client = TelegramClient(
+                StringSession(os.environ["TOKEN"]),
+                int(os.environ["API_ID"]),
+                os.environ["API_HASH"],
+            )
             asyncio.run(main())
         except Exception as e:
             logging.exception(e)
