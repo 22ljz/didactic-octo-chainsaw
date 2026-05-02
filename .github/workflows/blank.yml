@@ -38,22 +38,22 @@ jobs:
         run: |
           python3 main.py
 
-    build2:
-      runs-on: ubuntu-latest
-      env: *env
-      steps: *steps
+  build2:
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
 
-    build3:
-      runs-on: ubuntu-latest
-      env: *env
-      steps: *steps
+  build3:
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
 
-    build4:
-      runs-on: ubuntu-latest
-      env: *env
-      steps: *steps
+  build4:
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
 
-    build5:
-      runs-on: ubuntu-latest
-      env: *env
-      steps: *steps
+  build5:
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
