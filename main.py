@@ -61,4 +61,8 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    while time.time() - START < 4 * 60 * 60:
+        try:
+            asyncio.run(main())
+        except Exception as e:
+            logging.exception(e)
