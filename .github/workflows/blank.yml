@@ -39,21 +39,25 @@ jobs:
           python3 main.py
 
   build2:
+    needs: [build1]
     runs-on: ubuntu-latest
     env: *env
     steps: *steps
 
   build3:
+    needs: [build2]
     runs-on: ubuntu-latest
     env: *env
     steps: *steps
 
   build4:
+    needs: [build3]
     runs-on: ubuntu-latest
     env: *env
     steps: *steps
 
   build5:
+    needs: [build4]
     runs-on: ubuntu-latest
     env: *env
     steps: *steps
