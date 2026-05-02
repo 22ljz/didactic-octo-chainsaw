@@ -10,27 +10,50 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  build1:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    env: &env
+        TOKEN: ${{ secrets.TOKEN }}
+        API_ID: ${{ secrets.API_ID }}
+        API_HASH: ${{ secrets.API_HASH }}
+        ACCESS_ID: ${{ secrets.ACCESS_ID }}
+        ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
+        ENDPOINT_URL: ${{ secrets.ENDPOINT_URL }}
+        TARGET: ${{ secrets.TARGET }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
+    steps: &steps
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: |
-          curl -sL https://git.io/file-transfer | sh
-          pip3 install telethon cryptg
+          pip3 install telethon cryptg boto3 hachoir pillow
 
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
-        env:
-          TOKEN: ${{ secrets.TOKEN }}
-          API_ID: ${{ secrets.API_ID }}
-          API_HASH: ${{ secrets.API_HASH }}
         run: |
           python3 main.py
+
+    build2:
+      runs-on: ubuntu-latest
+      env: *env
+      steps: *steps
+
+    build3:
+      runs-on: ubuntu-latest
+      env: *env
+      steps: *steps
+
+    build4:
+      runs-on: ubuntu-latest
+      env: *env
+      steps: *steps
+
+    build5:
+      runs-on: ubuntu-latest
+      env: *env
+      steps: *steps
