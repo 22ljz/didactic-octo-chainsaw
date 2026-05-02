@@ -65,5 +65,5 @@ if __name__ == "__main__":
                 os.environ["API_HASH"],
             )
             asyncio.run(main())
-        except Exception as e:
-            logging.exception(e)
+        except:
+            pass
