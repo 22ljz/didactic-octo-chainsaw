@@ -46,7 +46,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
 
 
 async def scan_oss_folder_and_upload():
-    channel = await tg_client.get_entity((os.environ["TARGET"]))
+    channel = await tg_client.get_entity(int(os.environ["TARGET"]))
 
     for file_obj in bucket.objects.all():
         if time.time() - START > 4 * 60 * 60:
