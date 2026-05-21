@@ -31,16 +31,20 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # # Runs a single command using the runners shell
-      # - name: Run a one-line script
-      #   run: |
-      #     pip3 install telethon cryptg boto3 hachoir pillow
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: pip
 
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: |
+          pip3 install telethon cryptg boto3 hachoir pillow
 
-      # # Runs a set of commands using the runners shell
-      # - name: Run a multi-line script
-      #   run: |
-      #     python3 main.py
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          python3 main.py
 
   cleanup:
     runs-on: ubuntu-latest
@@ -63,20 +67,20 @@ jobs:
     env: *env
     steps: *steps
 
-  # build3:
-  #   needs: [build2]
-  #   runs-on: ubuntu-latest
-  #   env: *env
-  #   steps: *steps
+  build3:
+    needs: [build2]
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
 
-  # build4:
-  #   needs: [build3]
-  #   runs-on: ubuntu-latest
-  #   env: *env
-  #   steps: *steps
+  build4:
+    needs: [build3]
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps
 
-  # build5:
-  #   needs: [build4]
-  #   runs-on: ubuntu-latest
-  #   env: *env
-  #   steps: *steps
+  build5:
+    needs: [build4]
+    runs-on: ubuntu-latest
+    env: *env
+    steps: *steps

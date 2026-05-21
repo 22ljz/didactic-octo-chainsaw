@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 import os
@@ -14,53 +16,49 @@ tg_client = None
 
 bucket = boto3.resource(
     "s3",
-    aws_access_key_id=os.environ["ACCESS_ID"],
-    aws_secret_access_key=os.environ["ACCESS_SECRET"],
-    endpoint_url=os.environ["ENDPOINT_URL"],
+    aws_access_key_id=os.environ["RCLONE_CONFIG_R2_ACCESS_KEY_ID"],
+    aws_secret_access_key=os.environ["RCLONE_CONFIG_R2_SECRET_ACCESS_KEY"],
+    endpoint_url=os.environ["RCLONE_CONFIG_R2_ENDPOINT"],
     region_name="",
-).Bucket("test")
+).Bucket(os.environ["RCLONE_CONFIG_R2_BUCKET"])
 
-async def reset_semaphore(t):
-    await asyncio.sleep(t)
-    for _ in range(5):
-        await sem.acquire()
-    os.exit(0)
+@contextmanager
+def handle_oss_file(oss_file_path, dest):
+    try:
+        bucket.download_file(oss_file_path, dest)
+        yield dest
+        bucket.Object(oss_file_path).delete()
+    finally:
+        os.remove(dest)
+
 
 async def upload_oss_file_to_tg(chat, oss_file_path):
     async with sem:
+        if time.time() - START >= 4 * 60 * 60:
+            return
         file_name = os.path.basename(oss_file_path)
-        try:
-            bucket.download_file(oss_file_path, f"/tmp/{oss_file_path}")
-    
+        with handle_oss_file(oss_file_path, file_name) as dest:
             await tg_client.send_file(
                 entity=chat,
-                file=f"/tmp/{oss_file_path}",
+                file=dest,
                 caption=file_name,
                 force_document=False,
                 supports_streaming=True,
                 file_name=file_name,
             )
-    
-            bucket.Object(oss_file_path).delete()
-            os.remove(f"/tmp/{oss_file_path}")
-            return
-    
-        except Exception as e:
-            logging.exception(e)
 
 
 async def scan_oss_folder_and_upload():
     channel = await tg_client.get_entity(int(os.environ["TARGET"]))
-    
-    tasks = [upload_oss_file_to_tg(channel, file_obj.key) for file_obj in bucket.objects.all()]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
 
-    for file_obj in bucket.objects.all():
-        if time.time() - START > 4 * 60 * 60:
-            return
-        await upload_oss_file_to_tg(channel, file_obj.key)
-        
-    os.exit(-1)
+    tasks = [
+        upload_oss_file_to_tg(channel, file_obj.key)
+        for file_obj in bucket.objects.all()
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    if len(tasks) > 0:
+        exit(0)
+    exit(-1)
 
 
 async def main():
@@ -71,17 +69,13 @@ async def main():
 if __name__ == "__main__":
     while time.time() - START < 4 * 60 * 60:
         try:
-            sem = asyncio.Semaphore(5)
-            timeout_task  = asyncio.create_task(reset_semaphore(START + 4 * 60 * 60 - time.time()))
+            sem = asyncio.Semaphore(2)
             tg_client = TelegramClient(
                 StringSession(os.environ["TOKEN"]),
                 int(os.environ["API_ID"]),
                 os.environ["API_HASH"],
             )
             asyncio.run(main())
-        except:
-                timeout_task.cancel()
-                try:
-                    await timeout_task
-                except asyncio.CancelledError:
-                    pass
+
+        except asyncio.CancelledError:
+            pass
