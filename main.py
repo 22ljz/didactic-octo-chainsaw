@@ -57,7 +57,6 @@ def handle_oss_file(oss_file_path, dest):
         try:
             chk =  data_dict[dest][1]
             dest = data_dict[dest][0]
-            dest = sanitize_filename(dest)
             bucket.download_file(oss_file_path, dest)
             md5_hash = hashlib.md5()
             with open(dest, "rb") as f:
