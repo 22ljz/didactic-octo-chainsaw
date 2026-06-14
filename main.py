@@ -7,12 +7,41 @@ import asyncio
 import logging
 import boto3
 import time
+import pymysql
+import hashlib
+from pathvalidate import sanitize_filename
 
 START = time.time()
+
+connection = pymysql.connect(
+  host = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+  port = 4000,
+  user = "2c58bJG12RWPxeW.root",
+  password = os.environ["TIDB_PASSWORD"],
+  database = "test",
+  ssl_verify_cert = True,
+  ssl_verify_identity = True,
+  ssl_ca = "/tmp/isrgrootx1.pem"
+)
+
 
 sem = None
 
 tg_client = None
+
+data_dict = {}
+
+with connection.cursor() as cursor:
+    # SQL 查询语句：选择所有列
+    sql = "select oid, filename, checksum from attachment"
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        a_col, b_col, c_col = row
+        # 如果 A 列的值重复，后面的会覆盖前面的
+        data_dict[str(a_col)] = (b_col, c_col)
 
 bucket = boto3.resource(
     "s3",
@@ -25,7 +54,15 @@ bucket = boto3.resource(
 @contextmanager
 def handle_oss_file(oss_file_path, dest):
     try:
+        dest = data_dict[dest][0]
+        dest = sanitize_filename(dest)
         bucket.download_file(oss_file_path, dest)
+        md5_hash = hashlib.md5()
+        with open(dest, "rb") as f:
+            # 分块读取避免大文件内存溢出
+            for chunk in iter(lambda: f.read(4096), b""):
+                md5_hash.update(chunk)
+        assert md5_hash.hexdigest() == data_dict[dest][1]
         yield dest
         bucket.Object(oss_file_path).delete()
     finally:
