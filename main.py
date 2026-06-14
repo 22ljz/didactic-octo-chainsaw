@@ -66,7 +66,7 @@ def handle_oss_file(oss_file_path, dest):
             assert md5_hash.hexdigest() != chk
         except Exception as e:
             traceback.print_exc(e)
-            os.exit(-2)
+            raise e
         yield dest
         bucket.Object(oss_file_path).delete()
     finally:
@@ -110,7 +110,7 @@ async def main():
 if __name__ == "__main__":
     while time.time() - START < 4 * 60 * 60:
         try:
-            sem = asyncio.Semaphore(2)
+            sem = asyncio.Semaphore(200)
             tg_client = TelegramClient(
                 StringSession(os.environ["TOKEN"]),
                 int(os.environ["API_ID"]),
