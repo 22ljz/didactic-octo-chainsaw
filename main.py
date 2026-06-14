@@ -63,7 +63,7 @@ def handle_oss_file(oss_file_path, dest):
             assert md5_hash.hexdigest() != results[0][1]
         except Exception as e:
             traceback.print_exc(e)
-            raise e
+            os.exit(-2)
         yield dest
         bucket.Object(oss_file_path).delete()
     finally:
