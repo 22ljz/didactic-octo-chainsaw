@@ -44,7 +44,7 @@ def handle_oss_file(oss_file_path, dest):
     try:
         with connection.cursor() as cursor:
             # SQL 查询语句：选择所有列
-            sql = f"select filename, checksum from attachment oid = '{dest}'"
+            sql = f"select filename, checksum from attachment where oid = '{dest}'"
             cursor.execute(sql)
 
             results = cursor.fetchone()
