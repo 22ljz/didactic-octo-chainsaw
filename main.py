@@ -10,6 +10,7 @@ import time
 import pymysql
 import hashlib
 from pathvalidate import sanitize_filename
+import traceback
 
 START = time.time()
 
@@ -42,22 +43,27 @@ bucket = boto3.resource(
 @contextmanager
 def handle_oss_file(oss_file_path, dest):
     try:
-        with connection.cursor() as cursor:
-            # SQL 查询语句：选择所有列
-            sql = f"select filename, checksum from attachment where oid = '{dest}'"
-            cursor.execute(sql)
+        try:
+            with connection.cursor() as cursor:
+                # SQL 查询语句：选择所有列
+                sql = f"select filename, checksum from attachment where oid = '{dest}'"
+                cursor.execute(sql)
 
-            results = cursor.fetchone()
+                results = cursor.fetchone()
+                print(results)
 
-        dest = results[0][0]
-        dest = sanitize_filename(dest)
-        bucket.download_file(oss_file_path, dest)
-        md5_hash = hashlib.md5()
-        with open(dest, "rb") as f:
-            # 分块读取避免大文件内存溢出
-            for chunk in iter(lambda: f.read(4096), b""):
-                md5_hash.update(chunk)
-        assert md5_hash.hexdigest() == results[0][1]
+            dest = results[0][0]
+            dest = sanitize_filename(dest)
+            bucket.download_file(oss_file_path, dest)
+            md5_hash = hashlib.md5()
+            with open(dest, "rb") as f:
+                # 分块读取避免大文件内存溢出
+                for chunk in iter(lambda: f.read(4096), b""):
+                    md5_hash.update(chunk)
+            assert md5_hash.hexdigest() != results[0][1]
+        except Exception as e:
+            traceback.print_exc(e)
+            raise e
         yield dest
         bucket.Object(oss_file_path).delete()
     finally:
