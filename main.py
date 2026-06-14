@@ -50,9 +50,8 @@ def handle_oss_file(oss_file_path, dest):
                 cursor.execute(sql)
 
                 results = cursor.fetchone()
-                print(results)
 
-            dest = results[0][0]
+            dest = results[0]
             dest = sanitize_filename(dest)
             bucket.download_file(oss_file_path, dest)
             md5_hash = hashlib.md5()
@@ -60,7 +59,7 @@ def handle_oss_file(oss_file_path, dest):
                 # 分块读取避免大文件内存溢出
                 for chunk in iter(lambda: f.read(4096), b""):
                     md5_hash.update(chunk)
-            assert md5_hash.hexdigest() != results[0][1]
+            assert md5_hash.hexdigest() != results[1]
         except Exception as e:
             traceback.print_exc(e)
             os.exit(-2)
@@ -81,7 +80,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
                 file=dest,
                 caption=file_name,
                 force_document=False,
-                supports_streaming=True,
+                # supports_streaming=True,
                 file_name=file_name,
             )
 
