@@ -15,14 +15,14 @@ import traceback
 START = time.time()
 
 connection = pymysql.connect(
-  host = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
-  port = 4000,
-  user = "2c58bJG12RWPxeW.root",
-  password = os.environ["TIDB_PASSWORD"],
-  database = "test",
-  ssl_verify_cert = True,
-  ssl_verify_identity = True,
-  ssl_ca = "/tmp/isrgrootx1.pem"
+    host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+    port=4000,
+    user="2c58bJG12RWPxeW.root",
+    password=os.environ["TIDB_PASSWORD"],
+    database="test",
+    ssl_verify_cert=True,
+    ssl_verify_identity=True,
+    ssl_ca="/tmp/isrgrootx1.pem",
 )
 
 
@@ -51,11 +51,12 @@ bucket = boto3.resource(
     region_name="",
 ).Bucket(os.environ["RCLONE_CONFIG_R2_BUCKET"])
 
+
 @contextmanager
 def handle_oss_file(oss_file_path, dest):
     try:
         try:
-            chk =  data_dict[dest][1]
+            chk = data_dict[dest][1]
             dest = data_dict[dest][0]
             bucket.download_file(oss_file_path, dest)
             md5_hash = hashlib.md5()
@@ -105,13 +106,16 @@ async def scan_oss_folder_and_upload():
 
 async def main():
     async with tg_client:
-        async for msg in tg_client.iter_messages(target_chat, limit=None):
+        channel = await tg_client.get_entity(int(os.environ["TARGET"]))
+        async for msg in tg_client.iter_messages(channel, limit=None):
             if msg.text is not None and isinstance(msg.text, str):
                 text = msg.text.strip()
+                print(f"Deleting {text}...", flush=True)
                 try:
-                   bucket.Object(text).delete()
+                    bucket.Object(text).delete()
+                    print(f"Deleted {text}...", flush=True)
                 except:
-                   pass
+                    pass
         await scan_oss_folder_and_upload()
 
 
