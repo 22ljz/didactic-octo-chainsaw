@@ -69,7 +69,7 @@ def handle_oss_file(oss_file_path, dest):
             traceback.print_exc(e)
             raise e
         yield dest
-        bucket.Object(oss_file_path).delete()
+        # bucket.Object(oss_file_path).delete()
     finally:
         os.remove(dest)
 
