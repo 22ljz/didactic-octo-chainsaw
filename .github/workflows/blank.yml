@@ -45,6 +45,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           python3 main.py
+          exit 2
 
   cleanup:
     runs-on: ubuntu-latest
