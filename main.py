@@ -78,6 +78,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
         if time.time() - START >= 4 * 60 * 60:
             return
         file_name = os.path.basename(oss_file_path)
+        print(f"Processing {file_name}...", flush=True)
         with handle_oss_file(oss_file_path, file_name) as dest:
             await tg_client.send_file(
                 entity=chat,
