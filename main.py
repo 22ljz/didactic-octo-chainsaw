@@ -105,6 +105,13 @@ async def scan_oss_folder_and_upload():
 
 async def main():
     async with tg_client:
+        async for msg in tg_client.iter_messages(target_chat, limit=None):
+            if msg.text is not None and isinstance(msg.text, str):
+                text = msg.text.strip()
+                try:
+                   bucket.Object(text).delete()
+                except:
+                   pass
         await scan_oss_folder_and_upload()
 
 
