@@ -113,7 +113,7 @@ async def scan_oss_folder_and_upload():
 
 
 async def main():
-    tg_client.start(bot_token=os.environ["TOKEN"])
+    await tg_client.start(bot_token=os.environ["TOKEN"])
     async with tg_client:
         await scan_oss_folder_and_upload()
 
