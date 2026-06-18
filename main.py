@@ -62,8 +62,7 @@ def handle_oss_file(oss_file_path, dest):
     try:
         chk = data_dict[dest][1]
         dest = data_dict[dest][0]
-        result = bucket.download_file(oss_file_path, dest)
-        logger.info("Downloading %s: %s", oss_file_path, result)
+        bucket.download_file(oss_file_path, dest)
         md5_hash = hashlib.md5()
         with open(dest, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
@@ -83,7 +82,6 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
         if time.time() - START >= 4 * 60 * 60:
             return
         file_name = os.path.basename(oss_file_path)
-        logger.info("Processing %s...", file_name)
         with handle_oss_file(oss_file_path, file_name) as dest:
             logger.info("Uploading %s...", file_name)
             try:
