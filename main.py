@@ -112,7 +112,9 @@ async def scan_oss_folder_and_upload():
 
 
 async def main():
-    await tg_client.start(bot_token=os.environ["TOKEN"])
+    tg_client = await TelegramClient(
+        "bot", int(os.environ["API_ID"]), os.environ["API_HASH"], request_retries=None
+    ).start(bot_token=os.environ["TOKEN"])
     async with tg_client:
         await scan_oss_folder_and_upload()
 
@@ -121,11 +123,6 @@ if __name__ == "__main__":
     while time.time() - START < 4 * 60 * 60:
         try:
             sem = asyncio.Semaphore(20)
-            tg_client = TelegramClient(
-                "bot",
-                int(os.environ["API_ID"]),
-                os.environ["API_HASH"],
-            )
             asyncio.run(main())
 
         except asyncio.CancelledError:
