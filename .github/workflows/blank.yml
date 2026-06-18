@@ -10,7 +10,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build3:
+  build1:
     # The type of runner that the job will run on
     runs-on: ubuntu-slim
     env: &env
@@ -59,7 +59,7 @@ jobs:
           rclone backend cleanup -o max-age=1m r2:${RCLONE_CONFIG_R2_BUCKET}
 
   build2:
-    # needs: [build1]
+    needs: [build1]
     runs-on: ubuntu-latest
     env:
         TOKEN: ${{ secrets.TOKEN2 }}
@@ -96,8 +96,8 @@ jobs:
         run: |
           python3 main.py
 
-  # build3:
-  #   needs: [build2]
-  #   runs-on: ubuntu-slim
-  #   env: *env
-  #   steps: *steps
+  build3:
+    needs: [build2]
+    runs-on: ubuntu-slim
+    env: *env
+    steps: *steps
