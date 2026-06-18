@@ -83,7 +83,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
             return
         file_name = os.path.basename(oss_file_path)
         with handle_oss_file(oss_file_path, file_name) as dest:
-            logger.info("Uploading %s...", file_name)
+            logger.info("Processing %s...", file_name)
             try:
                 result = await tg_client.send_file(
                     entity=chat,
