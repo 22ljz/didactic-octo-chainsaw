@@ -12,6 +12,13 @@ import hashlib
 from pathvalidate import sanitize_filename
 import traceback
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger()
+
 START = time.time()
 
 connection = pymysql.connect(
@@ -66,14 +73,12 @@ def handle_oss_file(oss_file_path, dest):
                     md5_hash.update(chunk)
             assert md5_hash.hexdigest() != chk
         except Exception as e:
-            print(f"Exception: {e}", flush=True)
-            traceback.print_exc(e)
+            logger.exception(e)
             raise e
         yield dest
         # bucket.Object(oss_file_path).delete()
     except Exception as e:
-        print(f"Exception: {e}", flush=True)
-        traceback.print_exc(e)
+        logger.exception(e)
     finally:
         os.remove(dest)
 
@@ -83,7 +88,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
         if time.time() - START >= 4 * 60 * 60:
             return
         file_name = os.path.basename(oss_file_path)
-        print(f"Processing {file_name}...", flush=True)
+        logger.debug("Processing %s...", file_name)
         with handle_oss_file(oss_file_path, file_name) as dest:
             await tg_client.send_file(
                 entity=chat,
@@ -115,14 +120,24 @@ async def main():
         async for msg in tg_client.iter_messages(channel, limit=None):
             if msg.text is not None and isinstance(msg.text, str):
                 text = msg.text.strip()
-                print(f"Deleting {text}...", flush=True)
+                logger.debug("Deleting %s...", text)
                 delete_objects.append({"Key": text})
-        bucket.delete_objects(
-            Delete={
-                "Objects": delete_objects,
-                "Quiet": True,
-            }
-        )
+        while len(delete_objects) > 1000:
+            bucket.delete_objects(
+                Delete={
+                    "Objects": delete_objects[:1000],
+                    "Quiet": True,
+                }
+            )
+            delete_objects = delete_objects[1000:]
+            logger.info("Deleted 1000 items")
+        if delete_objects:
+            bucket.delete_objects(
+                Delete={
+                    "Objects": delete_objects,
+                    "Quiet": True,
+                }
+            )
         await scan_oss_folder_and_upload()
 
 
