@@ -23,6 +23,11 @@ bucket = boto3.resource(
     region_name="",
 ).Bucket(os.environ["RCLONE_CONFIG_R2_BUCKET"])
 
+total = len(list(bucket.objects.all()))
+
+if total == 0:
+    exit(-1)
+
 
 async def main():
     async with tg_client:
