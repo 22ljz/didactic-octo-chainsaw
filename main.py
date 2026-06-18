@@ -9,8 +9,6 @@ import boto3
 import time
 import pymysql
 import hashlib
-from pathvalidate import sanitize_filename
-import traceback
 
 logging.basicConfig(
     level=logging.INFO,
@@ -69,7 +67,6 @@ def handle_oss_file(oss_file_path, dest):
             bucket.download_file(oss_file_path, dest)
             md5_hash = hashlib.md5()
             with open(dest, "rb") as f:
-                # 分块读取避免大文件内存溢出
                 for chunk in iter(lambda: f.read(4096), b""):
                     md5_hash.update(chunk)
             assert md5_hash.hexdigest() != chk
@@ -89,9 +86,9 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
         if time.time() - START >= 4 * 60 * 60:
             return
         file_name = os.path.basename(oss_file_path)
-        logger.debug("Processing %s...", file_name)
+        logger.info("Processing %s...", file_name)
         with handle_oss_file(oss_file_path, file_name) as dest:
-            await tg_client.send_file(
+            result = await tg_client.send_file(
                 entity=chat,
                 file=dest,
                 caption=file_name,
@@ -99,6 +96,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
                 # supports_streaming=True,
                 file_name=file_name,
             )
+            logger.info("result: %s", result)
 
 
 async def scan_oss_folder_and_upload():
