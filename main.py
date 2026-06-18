@@ -122,7 +122,7 @@ if __name__ == "__main__":
         try:
             sem = asyncio.Semaphore(200)
             tg_client = TelegramClient(
-                StringSession(os.environ["TOKEN"]),
+                os.environ["TOKEN"],
                 int(os.environ["API_ID"]),
                 os.environ["API_HASH"],
             )
