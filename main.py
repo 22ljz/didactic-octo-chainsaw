@@ -89,15 +89,18 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
         logger.info("Processing %s...", file_name)
         with handle_oss_file(oss_file_path, file_name) as dest:
             logger.info("Uploading %s...", file_name)
-            result = await tg_client.send_file(
-                entity=chat,
-                file=dest,
-                caption=file_name,
-                force_document=False,
-                # supports_streaming=True,
-                file_name=file_name,
-            )
-            logger.info("result: %s", result)
+            try:
+                result = await tg_client.send_file(
+                    entity=chat,
+                    file=dest,
+                    caption=file_name,
+                    force_document=False,
+                    # supports_streaming=True,
+                    file_name=file_name,
+                )
+                logger.info("result: %s", result)
+            except Exception as e:
+                logger.exception(e)
 
 
 async def scan_oss_folder_and_upload():
