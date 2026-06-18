@@ -107,7 +107,7 @@ jobs:
     needs: [cleanup]
     runs-on: ubuntu-slim
     env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - uses: actions/checkout@v5
 
