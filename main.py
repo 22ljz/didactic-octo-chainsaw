@@ -14,7 +14,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-# logging.getLogger("telethon").setLevel(level=logging.WARNING)
+logging.getLogger("telethon").setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 START = time.time()
