@@ -122,10 +122,10 @@ if __name__ == "__main__":
         try:
             sem = asyncio.Semaphore(200)
             tg_client = TelegramClient(
-                os.environ["TOKEN"],
+                "bot",
                 int(os.environ["API_ID"]),
                 os.environ["API_HASH"],
-            )
+            ).start(bot_token=os.environ["TOKEN"])
             asyncio.run(main())
 
         except asyncio.CancelledError:
