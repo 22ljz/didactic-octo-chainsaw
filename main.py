@@ -79,7 +79,7 @@ def handle_oss_file(oss_file_path, dest):
 
 async def upload_oss_file_to_tg(chat, oss_file_path):
     async with sem:
-        if time.time() - START >= 5 * 60 * 60:
+        if time.time() - START >= 4 * 60 * 60:
             return
         file_name = os.path.basename(oss_file_path)
         with handle_oss_file(oss_file_path, file_name) as dest:
@@ -114,7 +114,7 @@ async def scan_oss_folder_and_upload():
 async def main():
     global tg_client
     tg_client = await TelegramClient(
-        "bot", int(os.environ["API_ID"]), os.environ["API_HASH"], request_retries=None
+        "bot", int(os.environ["API_ID"]), os.environ["API_HASH"], request_retries=2
     ).start(bot_token=os.environ["TOKEN"])
     async with tg_client:
         await scan_oss_folder_and_upload()
