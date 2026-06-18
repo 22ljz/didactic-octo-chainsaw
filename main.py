@@ -17,7 +17,8 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger()
+logging.getLogger("telethon").setLevel(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 START = time.time()
 
@@ -122,22 +123,15 @@ async def main():
                 text = msg.text.strip()
                 logger.debug("Deleting %s...", text)
                 delete_objects.append({"Key": text})
-        while len(delete_objects) > 1000:
+        for i in range(0, len(delete_objects), 1000):
+            chunk = delete_objects[i : i + 1000]
             bucket.delete_objects(
                 Delete={
-                    "Objects": delete_objects[:1000],
+                    "Objects": chunk,
                     "Quiet": True,
                 }
             )
-            delete_objects = delete_objects[1000:]
-            logger.info("Deleted 1000 items")
-        if delete_objects:
-            bucket.delete_objects(
-                Delete={
-                    "Objects": delete_objects,
-                    "Quiet": True,
-                }
-            )
+            logger.info(f"Deleted {len(chunk)} items")
         await scan_oss_folder_and_upload()
 
 
