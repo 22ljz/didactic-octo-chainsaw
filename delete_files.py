@@ -1,14 +1,9 @@
-from contextlib import contextmanager
-
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 import os
 import asyncio
 import logging
 import boto3
-import time
-import pymysql
-import hashlib
 
 logging.basicConfig(
     level=logging.INFO,
