@@ -113,7 +113,7 @@ async def scan_oss_folder_and_upload():
 
 
 async def main():
-    async with tg_client:
+    with tg_client:
         await scan_oss_folder_and_upload()
 
 
