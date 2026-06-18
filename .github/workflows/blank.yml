@@ -12,7 +12,6 @@ jobs:
   # This workflow contains a single job called "build"
   build1:
     # The type of runner that the job will run on
-    if: false
     runs-on: ubuntu-slim
     env: &env
         TOKEN: ${{ secrets.TOKEN }}
@@ -60,7 +59,7 @@ jobs:
           rclone backend cleanup -o max-age=1m r2:${RCLONE_CONFIG_R2_BUCKET}
 
   build2:
-    # needs: [build1]
+    needs: [build1]
     runs-on: ubuntu-latest
     env:
         TOKEN: ${{ secrets.TOKEN2 }}
