@@ -109,7 +109,9 @@ jobs:
     env:
           GH_TOKEN: ${{ github.token }}
     steps:
-      - name: retry
+      - uses: actions/checkout@v5
+
+      - name: Retry
         run: |
           gh workflow run "${{ github.workflow }}" \
             --ref ${{ github.ref }}

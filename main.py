@@ -112,6 +112,7 @@ async def scan_oss_folder_and_upload():
 
 
 async def main():
+    global tg_client
     tg_client = await TelegramClient(
         "bot", int(os.environ["API_ID"]), os.environ["API_HASH"], request_retries=None
     ).start(bot_token=os.environ["TOKEN"])
