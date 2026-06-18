@@ -114,22 +114,6 @@ async def scan_oss_folder_and_upload():
 
 async def main():
     async with tg_client:
-        delete_objects = []
-        channel = await tg_client.get_entity(int(os.environ["TARGET"]))
-        async for msg in tg_client.iter_messages(channel, limit=None):
-            if msg.text is not None and isinstance(msg.text, str):
-                text = msg.text.strip()
-                logger.debug("Deleting %s...", text)
-                delete_objects.append({"Key": text})
-        for i in range(0, len(delete_objects), 1000):
-            chunk = delete_objects[i : i + 1000]
-            bucket.delete_objects(
-                Delete={
-                    "Objects": chunk,
-                    "Quiet": True,
-                }
-            )
-            logger.info(f"Deleted {len(chunk)} items")
         await scan_oss_folder_and_upload()
 
 

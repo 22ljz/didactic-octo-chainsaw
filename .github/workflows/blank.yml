@@ -12,9 +12,59 @@ jobs:
   # This workflow contains a single job called "build"
   build1:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     env: &env
         TOKEN: ${{ secrets.TOKEN }}
+        API_ID: ${{ secrets.API_ID }}
+        API_HASH: ${{ secrets.API_HASH }}
+        TARGET: ${{ secrets.TARGET }}
+        RCLONE_CONFIG_R2_BUCKET: ${{ secrets.BUCKET }}
+        RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+        RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+        RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.ENDPOINT }}
+        RCLONE_CONFIG_R2_TYPE: s3
+        RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+        RCLONE_CONFIG_R2_NO_CHECK_BUCKET: true
+        TIDB_PASSWORD: ${{ secrets.TIDB_PASSWORD }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps: &steps
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v5
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: pip
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          python3 delete_files.py
+
+  cleanup:
+    runs-on: ubuntu-latest
+    env: *env
+    steps:
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: |
+          sudo apt update
+          sudo apt install -y rclone
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          rclone backend cleanup -o max-age=1m r2:${RCLONE_CONFIG_R2_BUCKET}
+
+  build2:
+    needs: [build1]
+    runs-on: ubuntu-latest
+  build1:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    env: &env
+        TOKEN: ${{ secrets.TOKEN2 }}
         API_ID: ${{ secrets.API_ID }}
         API_HASH: ${{ secrets.API_HASH }}
         TARGET: ${{ secrets.TARGET }}
@@ -48,41 +98,8 @@ jobs:
         run: |
           python3 main.py
 
-  cleanup:
-    runs-on: ubuntu-latest
-    env: *env
-    steps:
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: |
-          sudo apt update
-          sudo apt install -y rclone
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          rclone backend cleanup -o max-age=1m r2:${RCLONE_CONFIG_R2_BUCKET}
-
-  build2:
-    needs: [build1]
-    runs-on: ubuntu-latest
-    env: *env
-    steps: *steps
-
   build3:
     needs: [build2]
-    runs-on: ubuntu-latest
-    env: *env
-    steps: *steps
-
-  build4:
-    needs: [build3]
-    runs-on: ubuntu-latest
-    env: *env
-    steps: *steps
-
-  build5:
-    needs: [build4]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     env: *env
     steps: *steps
