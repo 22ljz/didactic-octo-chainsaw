@@ -66,10 +66,14 @@ def handle_oss_file(oss_file_path, dest):
                     md5_hash.update(chunk)
             assert md5_hash.hexdigest() != chk
         except Exception as e:
+            print(f"Exception: {e}", flush=True)
             traceback.print_exc(e)
             raise e
         yield dest
         # bucket.Object(oss_file_path).delete()
+    except Exception as e:
+        print(f"Exception: {e}", flush=True)
+        traceback.print_exc(e)
     finally:
         os.remove(dest)
 
@@ -106,16 +110,19 @@ async def scan_oss_folder_and_upload():
 
 async def main():
     async with tg_client:
+        delete_objects = []
         channel = await tg_client.get_entity(int(os.environ["TARGET"]))
         async for msg in tg_client.iter_messages(channel, limit=None):
             if msg.text is not None and isinstance(msg.text, str):
                 text = msg.text.strip()
                 print(f"Deleting {text}...", flush=True)
-                try:
-                    bucket.Object(text).delete()
-                    print(f"Deleted {text}...", flush=True)
-                except:
-                    pass
+                delete_objects.append({"Key": text})
+        bucket.delete_objects(
+            Delete={
+                "Objects": delete_objects,
+                "Quiet": True,
+            }
+        )
         await scan_oss_folder_and_upload()
 
 
