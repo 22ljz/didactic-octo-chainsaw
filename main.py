@@ -113,7 +113,8 @@ async def scan_oss_folder_and_upload():
 
 
 async def main():
-    with tg_client:
+    tg_client.start(bot_token=os.environ["TOKEN"])
+    async with tg_client:
         await scan_oss_folder_and_upload()
 
 
@@ -125,7 +126,7 @@ if __name__ == "__main__":
                 "bot",
                 int(os.environ["API_ID"]),
                 os.environ["API_HASH"],
-            ).start(bot_token=os.environ["TOKEN"])
+            )
             asyncio.run(main())
 
         except asyncio.CancelledError:
