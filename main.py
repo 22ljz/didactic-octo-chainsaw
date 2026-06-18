@@ -98,7 +98,7 @@ async def upload_oss_file_to_tg(chat, oss_file_path):
                     # supports_streaming=True,
                     file_name=file_name,
                 )
-                logger.info("result: %s", result)
+                # logger.info("result: %s", result)
             except Exception as e:
                 logger.exception(e)
 
