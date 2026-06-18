@@ -43,7 +43,7 @@ jobs:
           python3 delete_files.py
 
   cleanup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     env: *env
     steps:
       # Runs a single command using the runners shell
