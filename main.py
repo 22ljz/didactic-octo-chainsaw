@@ -14,7 +14,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logging.getLogger("telethon").setLevel(level=logging.WARNING)
+# logging.getLogger("telethon").setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 START = time.time()
@@ -125,7 +125,7 @@ async def main():
 if __name__ == "__main__":
     while time.time() - START < 4 * 60 * 60:
         try:
-            sem = asyncio.Semaphore(5)
+            sem = asyncio.Semaphore(20)
             tg_client = TelegramClient(
                 "bot",
                 int(os.environ["API_ID"]),
