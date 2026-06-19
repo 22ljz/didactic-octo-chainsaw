@@ -102,14 +102,14 @@ jobs:
           python3 main.py
 
   build3:
-    if: false
+    # if: false
     needs: [build2]
     runs-on: ubuntu-slim
     env: *env
     steps: *steps
 
   build4:
-    needs: [build2]
+    needs: [build3]
     runs-on: ubuntu-slim
     env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

@@ -60,18 +60,18 @@ bucket = boto3.resource(
 
 @contextmanager
 def handle_oss_file(oss_file_path, dest):
+    chk = data_dict[dest][1]
+    dest = data_dict[dest][0]
+    bucket.download_file(oss_file_path, oss_file_path)
+    shutil.move(oss_file_path, dest)
+    # md5_hash = hashlib.md5()
+    # with open(dest, "rb") as f:
+    #     for chunk in iter(lambda: f.read(4096), b""):
+    #         md5_hash.update(chunk)
+    # assert md5_hash.hexdigest() != chk
     try:
-        chk = data_dict[dest][1]
-        dest = data_dict[dest][0]
-        bucket.download_file(oss_file_path, oss_file_path)
-        shutil.move(oss_file_path, dest)
-        # md5_hash = hashlib.md5()
-        # with open(dest, "rb") as f:
-        #     for chunk in iter(lambda: f.read(4096), b""):
-        #         md5_hash.update(chunk)
-        # assert md5_hash.hexdigest() != chk
         yield dest
-        bucket.Object(oss_file_path).delete()
+        # bucket.Object(oss_file_path).delete()
     except Exception as e:
         logger.exception(e)
         raise e
