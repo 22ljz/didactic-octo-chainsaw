@@ -9,6 +9,7 @@ import boto3
 import time
 import pymysql
 import hashlib
+import shutil
 
 logging.basicConfig(
     level=logging.INFO,
@@ -63,7 +64,8 @@ def handle_oss_file(oss_file_path, dest):
     try:
         chk = data_dict[dest][1]
         dest = data_dict[dest][0]
-        bucket.download_file(oss_file_path, dest)
+        bucket.download_file(oss_file_path, oss_file_path)
+        shutil.move(oss_file_path, dest)
         md5_hash = hashlib.md5()
         with open(dest, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
