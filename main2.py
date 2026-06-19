@@ -29,10 +29,9 @@ async def main():
             if msg.text is not None and isinstance(msg.text, str):
                 message_list.append(msg)
         message_list = sorted(message_list, key=lambda msg: int(msg.text))
-        for i in range(0, len(message_list), 100):
-            chunk = message_list[i : i + 100]
-            logger.info(f"Processing {len(chunk)}...")
-            await tg_client.forward_messages(channel2, chunk, drop_author=True)
+        for msg in message_list:
+            logger.info(f"Processing {msg.text}...")
+            await msg.forward_to(channel2, drop_author=True)
 
 
 if __name__ == "__main__":
