@@ -67,7 +67,7 @@ jobs:
     # needs: [build1]
     runs-on: ubuntu-latest
     env:
-        TOKEN: ${{ secrets.TOKEN }}
+        TOKEN: ${{ secrets.TOKEN2 }}
         API_ID: ${{ secrets.API_ID }}
         API_HASH: ${{ secrets.API_HASH }}
         TARGET: ${{ secrets.TARGET }}
