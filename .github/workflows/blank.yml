@@ -67,10 +67,11 @@ jobs:
     # needs: [build1]
     runs-on: ubuntu-latest
     env:
-        TOKEN: ${{ secrets.TOKEN2 }}
+        TOKEN: ${{ secrets.TOKEN }}
         API_ID: ${{ secrets.API_ID }}
         API_HASH: ${{ secrets.API_HASH }}
         TARGET: ${{ secrets.TARGET }}
+        TARGET2: ${{ secrets.TARGET2 }}
         RCLONE_CONFIG_R2_BUCKET: ${{ secrets.BUCKET }}
         RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
@@ -99,10 +100,10 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          python3 main.py
+          python3 main2.py
 
   build3:
-    # if: false
+    if: false
     needs: [build2]
     runs-on: ubuntu-slim
     env: *env
