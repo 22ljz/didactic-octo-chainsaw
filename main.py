@@ -67,7 +67,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    while time.time() - START < 4 * 60 * 60:
+    while time.time() - START < 5 * 60 * 60:
         try:
             sem = asyncio.Semaphore(2)
             tg_client = TelegramClient(
