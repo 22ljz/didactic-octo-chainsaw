@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 from telethon import TelegramClient
+from telethon.sessions import StringSession
 import os
 import asyncio
 import logging
@@ -113,9 +114,11 @@ async def scan_oss_folder_and_upload():
 
 async def main():
     global tg_client
-    tg_client = await TelegramClient(
-        "bot", int(os.environ["API_ID"]), os.environ["API_HASH"], request_retries=2
-    ).start(bot_token=os.environ["TOKEN"])
+    tg_client = TelegramClient(
+        StringSession(os.environ["TOKEN"]),
+        int(os.environ["API_ID"]),
+        os.environ["API_HASH"],
+    )
     async with tg_client:
         await scan_oss_folder_and_upload()
 
