@@ -24,7 +24,7 @@ async def main():
     async with tg_client:
         channel = await tg_client.get_entity(int(os.environ["TARGET"]))
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
-        message_list = await tg_client.iter_messages(channel, limit=None)
+        message_list = await tg_client.get_messages(channel, limit=None)
         message_list = sorted(message_list, key=lambda msg: int(msg.text))
         await tg_client.forward_messages(channel2, message_list)
 
