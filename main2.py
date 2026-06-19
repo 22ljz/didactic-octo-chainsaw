@@ -29,7 +29,8 @@ async def main():
             if msg.text is not None and isinstance(msg.text, str):
                 message_list.append(msg)
         message_list = sorted(message_list, key=lambda msg: int(msg.text))
-        await tg_client.forward_messages(channel2, message_list)
+        for msg in message_list:
+            await msg.forward(channel2)
 
 
 if __name__ == "__main__":
