@@ -30,6 +30,7 @@ async def main():
                 message_list.append(msg)
         message_list = sorted(message_list, key=lambda msg: int(msg.text))
         for msg in message_list:
+            logger.info(f"Processing {msg.text}...")
             await msg.forward(channel2)
 
 
