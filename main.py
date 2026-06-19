@@ -69,7 +69,7 @@ def handle_oss_file(oss_file_path, dest):
                 md5_hash.update(chunk)
         assert md5_hash.hexdigest() != chk
         yield dest
-    # bucket.Object(oss_file_path).delete()
+        bucket.Object(oss_file_path).delete()
     except Exception as e:
         logger.exception(e)
         raise e
