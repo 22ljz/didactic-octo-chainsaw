@@ -56,5 +56,7 @@ async def main():
 if __name__ == "__main__":
     try:
         asyncio.run(main())
-    except:
+    except Exception as e:
+        logger.exception(e)
+    except asyncio.CancelledError:
         pass

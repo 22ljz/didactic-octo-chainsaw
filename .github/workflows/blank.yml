@@ -110,7 +110,7 @@ jobs:
     steps: *steps
 
   build4:
-    needs: [build3]
+    needs: [build2]
     runs-on: ubuntu-slim
     env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
