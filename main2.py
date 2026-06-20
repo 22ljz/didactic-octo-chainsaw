@@ -20,7 +20,7 @@ async def auto_exit():
 
 
 async def main():
-    asyncio.create_task(auto_exit)
+    asyncio.create_task(auto_exit())
     global tg_client
     tg_client = TelegramClient(
         StringSession(os.environ["TOKEN"]),
@@ -58,5 +58,6 @@ if __name__ == "__main__":
         asyncio.run(main())
     except Exception as e:
         logger.exception(e)
+        raise e
     except asyncio.CancelledError:
         pass
