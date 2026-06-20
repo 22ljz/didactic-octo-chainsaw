@@ -13,14 +13,7 @@ logging.getLogger("telethon").setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
-async def auto_exit():
-    await asyncio.sleep(5 * 3600)
-    await tg_client.disconnect()
-    exit(0)
-
-
 async def main():
-    asyncio.create_task(auto_exit())
     global tg_client
     tg_client = TelegramClient(
         StringSession(os.environ["TOKEN"]),
@@ -55,9 +48,11 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        asyncio.wait_for(main(), timeout=5 * 60 * 60)
     except Exception as e:
         logger.exception(e)
         raise e
     except asyncio.CancelledError:
+        pass
+    except asyncio.TimeoutError:
         pass
