@@ -42,7 +42,7 @@ async def main():
             chunk = message_list[i : i + 100]
             logger.info(f"Processing {len(chunk)}...")
             await tg_client.forward_messages(
-                channel2, chunk, drop_author=True, drop_media_captions=True
+                channel2, chunk, drop_author=True
             )
 
 
