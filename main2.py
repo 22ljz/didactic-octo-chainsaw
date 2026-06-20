@@ -19,14 +19,23 @@ async def main():
         StringSession(os.environ["TOKEN"]),
         int(os.environ["API_ID"]),
         os.environ["API_HASH"],
-        request_retries=2,
+        request_retries=10,
+        flood_sleep_threshold=float("inf"),
     )
     async with tg_client:
         channel = await tg_client.get_entity(int(os.environ["TARGET"]))
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
+        exist_set = set()
+        async for msg in tg_client.iter_messages(channel2, limit=None):
+            if msg.text is not None and isinstance(msg.text, str):
+                exist_set.add(msg.text)
         message_list = []
         async for msg in tg_client.iter_messages(channel, limit=None):
-            if msg.text is not None and isinstance(msg.text, str):
+            if (
+                msg.text is not None
+                and isinstance(msg.text, str)
+                and msg.text not in exist_set
+            ):
                 message_list.append(msg)
         message_list = sorted(message_list, key=lambda msg: int(msg.text))
         for i in range(0, len(message_list), 100):
