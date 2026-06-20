@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 async def main():
+    try:
+        await asyncio.wait_for(task(), timeout=5 * 60 * 60)
+    except asyncio.TimeoutError:
+        pass
+
+
+async def task():
     global tg_client
     tg_client = TelegramClient(
         StringSession(os.environ["TOKEN"]),
@@ -48,11 +55,9 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        asyncio.wait_for(main(), timeout=5 * 60 * 60)
+        asyncio.run(main())
     except Exception as e:
         logger.exception(e)
         raise e
     except asyncio.CancelledError:
-        pass
-    except asyncio.TimeoutError:
         pass
