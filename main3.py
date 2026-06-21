@@ -1,0 +1,47 @@
+from telethon import TelegramClient
+from telethon.sessions import StringSession
+import os
+import asyncio
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logging.getLogger("telethon").setLevel(level=logging.WARNING)
+logger = logging.getLogger(__name__)
+
+
+async def main():
+    try:
+        await asyncio.wait_for(task(), timeout=5 * 60 * 60)
+    except asyncio.TimeoutError:
+        pass
+
+
+async def task():
+    global tg_client
+    tg_client = TelegramClient(
+        StringSession(os.environ["TOKEN"]),
+        int(os.environ["API_ID"]),
+        os.environ["API_HASH"],
+        request_retries=10,
+        flood_sleep_threshold=float("inf"),
+    )
+    async with tg_client:
+        channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
+        async for msg in tg_client.iter_messages(channel2, limit=None):
+            if msg.text and isinstance(msg.text, str):
+                await msg.edit(text="")
+    exit(-1)
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logger.exception(e)
+        raise e
+    except asyncio.CancelledError:
+        pass
