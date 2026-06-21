@@ -1,3 +1,5 @@
+import time
+
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 import os
@@ -11,6 +13,10 @@ logging.basicConfig(
 )
 # logging.getLogger("telethon").setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
+
+
+def clamp(n, minn, maxn):
+    return max(min(maxn, n), minn)
 
 
 async def main():
@@ -30,10 +36,17 @@ async def task():
         flood_sleep_threshold=float("inf"),
     )
     async with tg_client:
+        cnt = 0
+        start_time = time.time()
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
         async for msg in tg_client.iter_messages(channel2, limit=None):
             if msg.text and isinstance(msg.text, str):
                 await msg.edit(text="")
+                cnt += 1
+                if cnt > 10:
+                    await asyncio.sleep(clamp(time.time() - start_time, 0.1, 1))
+                    cnt = 0
+                    start_time = time.time()
     exit(-1)
 
 
