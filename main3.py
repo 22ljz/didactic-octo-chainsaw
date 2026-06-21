@@ -36,11 +36,13 @@ async def task():
         flood_sleep_threshold=float("inf"),
     )
     async with tg_client:
+        found = False
         cnt = 0
         start_time = time.time()
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
         async for msg in tg_client.iter_messages(channel2, limit=None):
             if msg.text and isinstance(msg.text, str):
+                found = True
                 await msg.edit(text="")
                 cnt += 1
                 if cnt > 10:
@@ -49,7 +51,8 @@ async def task():
                     await asyncio.sleep(sleep_time)
                     cnt = 0
                     start_time = time.time()
-    exit(-1)
+    if not found:
+        exit(-1)
 
 
 if __name__ == "__main__":
