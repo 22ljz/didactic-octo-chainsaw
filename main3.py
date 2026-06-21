@@ -44,9 +44,9 @@ async def task():
                 await msg.edit(text="")
                 cnt += 1
                 if cnt > 10:
-                    sleep_time = time.time() - start_time
-                    logger.info(f"Processing 10 (sleep {sleep_time}s)...")
-                    await asyncio.sleep(clamp(sleep_time, 0.1, 1))
+                    sleep_time = clamp(1 - (time.time() - start_time), 0.1, 1)
+                    logger.info(f"Processing 10 (sleep {sleep_time:.1f}s)...")
+                    await asyncio.sleep(sleep_time, 0.1, 1)
                     cnt = 0
                     start_time = time.time()
     exit(-1)
