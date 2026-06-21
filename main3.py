@@ -46,7 +46,7 @@ async def task():
                 if cnt > 10:
                     sleep_time = clamp(1 - (time.time() - start_time), 0.1, 1)
                     logger.info(f"Processing 10 (sleep {sleep_time:.1f}s)...")
-                    await asyncio.sleep(sleep_time, 0.1, 1)
+                    await asyncio.sleep(sleep_time)
                     cnt = 0
                     start_time = time.time()
     exit(-1)
