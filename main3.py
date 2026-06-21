@@ -41,11 +41,12 @@ async def task():
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
         async for msg in tg_client.iter_messages(channel2, limit=None):
             if msg.text and isinstance(msg.text, str):
-                logger.info(f"Processing {msg.text}...")
                 await msg.edit(text="")
                 cnt += 1
                 if cnt > 10:
-                    await asyncio.sleep(clamp(time.time() - start_time, 0.1, 1))
+                    sleep_time = time.time() - start_time
+                    logger.info(f"Processing 10 (sleep {sleep_time}s)...")
+                    await asyncio.sleep(clamp(sleep_time, 0.1, 1))
                     cnt = 0
                     start_time = time.time()
     exit(-1)
