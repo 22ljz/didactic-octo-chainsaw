@@ -41,6 +41,7 @@ async def task():
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
         async for msg in tg_client.iter_messages(channel2, limit=None):
             if msg.text and isinstance(msg.text, str):
+                logger.info(f"Processing {msg.text}...")
                 await msg.edit(text="")
                 cnt += 1
                 if cnt > 10:
