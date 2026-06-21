@@ -9,7 +9,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logging.getLogger("telethon").setLevel(level=logging.WARNING)
+# logging.getLogger("telethon").setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -33,7 +33,6 @@ async def task():
         channel2 = await tg_client.get_entity(int(os.environ["TARGET2"]))
         async for msg in tg_client.iter_messages(channel2, limit=None):
             if msg.text and isinstance(msg.text, str):
-                logger.info(f"Processing {msg.text}...")
                 await msg.edit(text="")
     exit(-1)
 
